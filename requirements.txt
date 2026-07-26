@@ -2,4 +2,3 @@ discord.py
 Pillow
 flask
 gunicorn
-waittress
