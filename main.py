@@ -110,15 +110,19 @@ async def on_ready():
 
 # ==================== START ====================
 
-if __name__ == "__main__":
-    # Start serwera WWW w tle
-    t = threading.Thread(target=run_flask)
-    t.daemon = True
-    t.start()
-    
-    # Start Bota Discord
-    token = os.environ.get("DISCORD_TOKEN")
+import threading
+import os
+
+# ... Twój dotychczasowy kod z botem i Flaskiem ...
+
+def run_bot():
+    # token z pobranych zmiennych środowiskowych
+    token = os.getenv("DISCORD_TOKEN")
     if token:
         bot.run(token)
-    else:
-        print("❌ Brak tokena DISCORD_TOKEN!")
+
+# Uruchomienie bota w tle, żeby Flask nie blokował procesu
+threading.Thread(target=run_bot, daemon=True).start()
+
+if __name__ == "__main__":
+    app.run()
