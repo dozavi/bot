@@ -110,19 +110,14 @@ async def on_ready():
 
 # ==================== START ====================
 
-import threading
-import os
-
-# ... Twój dotychczasowy kod z botem i Flaskiem ...
-
 def run_bot():
-    # token z pobranych zmiennych środowiskowych
     token = os.getenv("DISCORD_TOKEN")
     if token:
         bot.run(token)
 
-# Uruchomienie bota w tle, żeby Flask nie blokował procesu
+# Uruchamiamy bota w tle ZAWSZE przy ładowaniu pliku przez Gunicorna
 threading.Thread(target=run_bot, daemon=True).start()
 
 if __name__ == "__main__":
-    app.run()
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host='0.0.0.0', port=port)
