@@ -1,1 +1,1 @@
-web: gunicorn -k gevent main:app
+web: waitress-serve --port=$PORT main:app
