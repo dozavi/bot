@@ -1,8 +1,21 @@
+# Upewnij się, że masz te importy na samej górze:
 import os
 import threading
-from flask import Flask, render_template_string, request, redirect, url_for
-import discord
-from discord.ext import commands
+
+# ... (TUTAJ JEST CAŁY TWÓJ KOD FLASKA I BOTA) ...
+
+# Tę funkcję i jej wywołanie umieść NA SAMYM DOLE pliku (BEZ ŻADNEGO if __name__):
+def run_bot():
+    token = os.getenv("DISCORD_TOKEN")
+    if token:
+        try:
+            bot.run(token)
+        except Exception as e:
+            print(f"Błąd uruchamiania bota: {e}")
+
+# Odpalenie wątku bezpośrednio w kodzie głównym
+t = threading.Thread(target=run_bot, daemon=True)
+t.start()
 
 # ==================== STRONA WWW (DASHBOARD FLASK) ====================
 
