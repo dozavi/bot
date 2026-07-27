@@ -1,25 +1,14 @@
 import os
 import threading
-import asyncio
 from flask import Flask, render_template_string, request, redirect, url_for
 import discord
 from discord.ext import commands
-
-# ==================== BOT DISCORD ====================
-
-intents = discord.Intents.default()
-intents.message_content = True
-bot = commands.Bot(command_prefix="!", intents=intents)
-
-@bot.event
-async def on_ready():
-    print(f'✅ Bot Zavi jest online jako {bot.user}')
-
 
 # ==================== STRONA WWW (DASHBOARD FLASK) ====================
 
 app = Flask(__name__)
 
+# Wygląd Twojej strony WWW (HTML + CSS)
 HTML_TEMPLATE = """
 <!DOCTYPE html>
 <html lang="pl">
@@ -105,23 +94,31 @@ def send_message():
             
     return redirect(url_for('home'))
 
-
-# ==================== START BOTA W TLE ====================
-
-def run_bot():
-    token = os.getenv("DISCORD_TOKEN")
-    if token:
-        try:
-            bot.run(token)
-        except Exception as e:
-            print(f"Błąd uruchamiania bota: {e}")
-    else:
-        print("❌ BŁĄD: Zmienna środowiskowa DISCORD_TOKEN nie została ustawiona!")
-
-# Uruchomienie bota w osobnym wątku przy podpinaniu przez Gunicorn
-threading.Thread(target=run_bot, daemon=True).start()
-
-# Domyślne uruchomienie dla lokalnego testowania
-if __name__ == "__main__":
+def run_flask():
     port = int(os.environ.get("PORT", 5000))
     app.run(host='0.0.0.0', port=port)
+
+# ==================== BOT DISCORD ====================
+
+intents = discord.Intents.default()
+intents.message_content = True
+bot = commands.Bot(command_prefix="!", intents=intents)
+
+@bot.event
+async def on_ready():
+    print(f'✅ Bot Zavi jest online jako {bot.user}')
+
+# ==================== START ====================
+
+if __name__ == "__main__":
+    # Start serwera WWW w tle
+    t = threading.Thread(target=run_flask)
+    t.daemon = True
+    t.start()
+    
+    # Start Bota Discord
+    token = os.environ.get("DISCORD_TOKEN")
+    if token:
+        bot.run(token)
+    else:
+        print("❌ Brak tokena DISCORD_TOKEN!")
