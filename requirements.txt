@@ -1,4 +1,3 @@
-gunicorn
-flask
 discord.py
+flask
 Pillow
